@@ -1,134 +1,195 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acesso | TREZZY PAY</title>
+  <title>Dashboard | Trezzy Pay</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#8b5cf6', 500: '#7c3aed', 600: '#6d28d9' } } } } }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: 'Outfit', sans-serif; background-color: #0b0b0f; color: #f5f5f7; }
-    .spinner { border: 3px solid rgba(139, 92, 246, 0.3); border-top-color: #8b5cf6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    body { font-family: 'Inter', sans-serif; background-color: #0b0b0f; color: #f5f5f7; }
+    h1, h2, h3, h4, .font-heading { font-family: 'Outfit', sans-serif; }
   </style>
 </head>
-<body class="antialiased min-h-screen flex items-center justify-center relative overflow-hidden">
+<body class="flex h-screen overflow-hidden antialiased">
 
-  <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full"></div>
-  </div>
-
-  <div id="loading-screen" class="relative z-10 flex flex-col items-center justify-center space-y-4">
-    <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-600 to-purple-800 p-0.5 shadow-lg shadow-purple-600/20 mb-2">
-      <div class="w-full h-full bg-[#14141b] rounded-full flex items-center justify-center text-purple-400 text-3xl">
+  <!-- SIDEBAR (Menu Lateral) -->
+  <aside class="w-64 flex-shrink-0 border-r border-[#292933] bg-[#14141b] hidden md:flex flex-col">
+    <div class="h-16 flex items-center px-6 border-b border-[#292933]">
+      <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold mr-3">
         <i class="fa-solid fa-cube"></i>
       </div>
+      <span class="font-heading font-black text-white text-lg tracking-tight">TREZZY <span class="text-purple-500">PAY</span></span>
     </div>
-    <h1 class="font-black text-2xl text-white tracking-tight">TREZZY <span class="text-purple-500">PAY</span></h1>
-    <div class="spinner my-4"></div>
-    <p class="text-sm text-zinc-400 font-medium animate-pulse">Carregando painel...</p>
-  </div>
+    
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 bg-purple-600/10 text-purple-400 rounded-lg font-semibold text-sm border border-purple-500/20">
+        <i class="fa-solid fa-layer-group w-5 text-center"></i> Meus Packs
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg font-medium text-sm transition">
+        <i class="fa-solid fa-compass w-5 text-center"></i> Explorar Loja
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg font-medium text-sm transition">
+        <i class="fa-solid fa-receipt w-5 text-center"></i> Minhas Compras
+      </a>
+    </nav>
 
-  <div id="login-form" class="relative z-10 w-full max-w-md px-6 hidden opacity-0 transition-opacity duration-700">
-    <div class="bg-[#14141b]/90 backdrop-blur-xl border border-[#292933] rounded-3xl p-8 shadow-2xl shadow-black">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-purple-800 p-0.5 shadow-lg mb-4">
-          <div class="w-full h-full bg-[#0b0b0f] rounded-full flex items-center justify-center text-purple-400 text-2xl">
-            <i class="fa-solid fa-cube"></i>
-          </div>
-        </div>
-        <h2 id="form-title" class="text-2xl font-black text-white">Acessar Conta</h2>
-        <p id="form-subtitle" class="text-xs text-zinc-400 mt-1">Gerencie seus packs STL e acessos</p>
-      </div>
-
-      <form id="auth-form" onsubmit="processarAutenticacao(event)" class="space-y-5">
-        <div>
-          <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2">E-mail</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-zinc-500"><i class="fa-solid fa-envelope"></i></span>
-            <input id="email-input" type="email" placeholder="seu@email.com" required class="w-full bg-[#0b0b0f] border border-[#292933] rounded-xl pl-11 pr-4 py-3.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" />
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2">Senha</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-zinc-500"><i class="fa-solid fa-lock"></i></span>
-            <input id="password-input" type="password" placeholder="••••••••" required class="w-full bg-[#0b0b0f] border border-[#292933] rounded-xl pl-11 pr-4 py-3.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" />
-          </div>
-        </div>
-        <p id="auth-message" class="hidden text-xs font-bold text-center mt-2 p-2.5 rounded-lg border"></p>
-        <button type="submit" id="submit-btn" class="w-full py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-95 mt-2 flex items-center justify-center gap-2">
-          <span id="btn-text">Entrar no Painel</span>
-        </button>
-      </form>
-
-      <div class="text-center mt-6 pt-4 border-t border-[#292933]">
-        <p id="toggle-text" class="text-xs text-zinc-400">
-          Ainda não tem conta? <button type="button" onclick="alternarModo()" class="text-purple-400 hover:text-purple-300 font-bold ml-1 underline">Criar conta</button>
-        </p>
-      </div>
+    <div class="p-4 border-t border-[#292933]">
+      <button onclick="terminarSessao()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg font-medium text-sm transition border border-transparent hover:border-red-500/20">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair da Conta
+      </button>
     </div>
+  </aside>
+
+  <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+  <div class="flex-1 flex flex-col overflow-hidden relative">
+    
+    <!-- HEADER MOBILE & PERFIL -->
+    <header class="h-16 flex items-center justify-between px-6 border-b border-[#292933] bg-[#0b0b0f]/80 backdrop-blur-md z-10">
+      <div class="md:hidden flex items-center gap-2">
+        <i class="fa-solid fa-cube text-purple-500"></i>
+        <span class="font-heading font-black text-white">TREZZY</span>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <p class="text-sm font-semibold text-white">Área de Membros</p>
+          <p id="user-email" class="text-xs text-zinc-400">Verificando acesso...</p>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-[#14141b] border border-[#292933] flex items-center justify-center text-zinc-400">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLL AREA -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+      <!-- Glow background -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+      <div class="max-w-5xl mx-auto space-y-8 relative z-10">
+        
+        <!-- HEADER DE BOAS VINDAS -->
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
+            <i class="fa-solid fa-circle-check"></i> Plano Ativo
+          </span>
+          <h1 class="text-3xl md:text-4xl font-bold text-white font-heading">Sua Biblioteca de STL</h1>
+          <p class="text-zinc-400 mt-2">Faça o download dos arquivos pré-suportados incluídos no seu plano.</p>
+        </div>
+
+        <!-- ESTATÍSTICAS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-[#14141b] border border-[#292933] rounded-2xl p-5">
+            <i class="fa-solid fa-box-open text-purple-500 mb-2 text-xl"></i>
+            <p class="text-2xl font-bold text-white font-heading">3</p>
+            <p class="text-xs text-zinc-400 uppercase tracking-wide font-semibold mt-1">Packs Liberados</p>
+          </div>
+          <div class="bg-[#14141b] border border-[#292933] rounded-2xl p-5">
+            <i class="fa-solid fa-file-zipper text-emerald-500 mb-2 text-xl"></i>
+            <p class="text-2xl font-bold text-white font-heading">1.2k+</p>
+            <p class="text-xs text-zinc-400 uppercase tracking-wide font-semibold mt-1">Modelos 3D</p>
+          </div>
+        </div>
+
+        <!-- GRELHA DE PRODUTOS / PACKS -->
+        <h2 class="text-xl font-bold text-white font-heading pt-4 border-t border-[#292933]">Arquivos Disponíveis para Download</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Card de Produto 1 -->
+          <div class="bg-[#14141b] border border-[#292933] rounded-2xl overflow-hidden hover:border-purple-500/50 transition duration-300 group flex flex-col">
+            <div class="h-40 bg-zinc-800 relative overflow-hidden">
+              <!-- Placeholder para Imagem do Pack -->
+              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 bg-[#0b0b0f]">
+                <i class="fa-solid fa-image text-3xl"></i>
+              </div>
+              <div class="absolute top-3 right-3 bg-[#0b0b0f]/80 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 text-xs font-bold text-zinc-300">
+                1.2 GB
+              </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <h3 class="text-lg font-bold text-white font-heading mb-1">Pack Articulados Premium</h3>
+              <p class="text-xs text-zinc-400 mb-4 line-clamp-2">Coleção completa de brinquedos e animais articulados que não necessitam de suportes na impressão FDM.</p>
+              <div class="mt-auto">
+                <button class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-purple-900/20">
+                  <i class="fa-solid fa-cloud-arrow-down"></i> Baixar ZIP
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Produto 2 -->
+          <div class="bg-[#14141b] border border-[#292933] rounded-2xl overflow-hidden hover:border-purple-500/50 transition duration-300 group flex flex-col">
+            <div class="h-40 bg-zinc-800 relative overflow-hidden">
+              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 bg-[#0b0b0f]">
+                <i class="fa-solid fa-image text-3xl"></i>
+              </div>
+              <div class="absolute top-3 right-3 bg-[#0b0b0f]/80 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 text-xs font-bold text-zinc-300">
+                850 MB
+              </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <h3 class="text-lg font-bold text-white font-heading mb-1">Decoração Geek & Dioramas</h3>
+              <p class="text-xs text-zinc-400 mb-4 line-clamp-2">Estátuas e bustos detalhados otimizados para impressoras de resina (SLA). Inclui arquivos pré-suportados.</p>
+              <div class="mt-auto">
+                <button class="w-full py-2.5 bg-[#292933] hover:bg-purple-600 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-cloud-arrow-down"></i> Baixar ZIP
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Suporte -->
+          <div class="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-5 flex flex-col justify-center items-center text-center hover:bg-emerald-900/20 transition">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-3xl mb-4">
+              <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white font-heading mb-2">Comunidade Maker</h3>
+            <p class="text-xs text-zinc-400 mb-6">Tire dúvidas sobre parâmetros de impressão, fatiamento e resinas diretamente no nosso grupo VIP.</p>
+            <a href="https://wa.me/5511990035253" target="_blank" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold transition">
+              Acessar Grupo
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </main>
   </div>
 
   <script>
-    const SUPABASE_URL = 'SUA_PROJECT_URL';
-    const SUPABASE_ANON_KEY = 'SUA_ANON_KEY';
+    // ⚠️ SUBSTITUA PELAS SUAS CHAVES REAIS
+    const SUPABASE_URL = 'https://oysnslvbmmegtkzznwyf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95c25zbHZibW1lZ3Rrenpud3lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4ODc2ODEsImV4cCI6MjEwODQ2MzY4MX0.6O9JWMVh6xW2i3_frYDSPQEBN0Ty3DUxnVazC4Cmua0';
+    
     let supabaseClient = null;
-    try { if (SUPABASE_URL !== 'SUA_PROJECT_URL') { supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } } catch(e) {}
-
-    let modoCriarConta = false;
-    function alternarModo() {
-      modoCriarConta = !modoCriarConta;
-      document.getElementById('form-title').textContent = modoCriarConta ? "Criar Nova Conta" : "Acessar Conta";
-      document.getElementById('btn-text').textContent = modoCriarConta ? "Registar Conta" : "Entrar no Painel";
-      document.getElementById('toggle-text').innerHTML = modoCriarConta 
-        ? `Já tem conta? <button type="button" onclick="alternarModo()" class="text-purple-400 font-bold ml-1 underline">Fazer Login</button>`
-        : `Ainda não tem conta? <button type="button" onclick="alternarModo()" class="text-purple-400 font-bold ml-1 underline">Criar conta</button>`;
-      document.getElementById('auth-message').classList.add('hidden');
+    if (SUPABASE_URL !== 'https://oysnslvbmmegtkzznwyf.supabase.co') {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('loading-screen').style.display = 'none';
-        const form = document.getElementById('login-form');
-        form.classList.remove('hidden');
-        form.style.opacity = '1';
-      }, 1000);
-    });
+    async function validarSessao() {
+      if (!supabaseClient) return; // Se não houver chaves, não valida (evita erros de console no teste)
 
-    async function processarAutenticacao(event) {
-      event.preventDefault();
-      const email = document.getElementById('email-input').value.trim();
-      const password = document.getElementById('password-input').value;
-      const msgBox = document.getElementById('auth-message');
+      const { data: { session } } = await supabaseClient.auth.getSession();
       
-      if (!supabaseClient) { window.location.href = "area-cliente.html"; return; } // Modo teste local
-
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.disabled = true;
-      document.getElementById('btn-text').innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Processando...`;
-
-      const { data, error } = modoCriarConta 
-        ? await supabaseClient.auth.signUp({ email, password })
-        : await supabaseClient.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        msgBox.textContent = "Erro: " + error.message;
-        msgBox.className = "text-xs font-bold text-center mt-2 p-2.5 rounded-lg border bg-red-950/40 border-red-900/50 text-red-400";
-        msgBox.classList.remove('hidden');
-        submitBtn.disabled = false;
-        document.getElementById('btn-text').textContent = modoCriarConta ? "Registar Conta" : "Entrar no Painel";
+      if (!session) {
+        // Expulsa o utilizador se não estiver autenticado
+        window.location.href = "index.html";
       } else {
-        msgBox.classList.add('hidden');
-        window.location.href = "area-cliente.html";
+        document.getElementById('user-email').textContent = session.user.email;
       }
     }
+
+    async function terminarSessao() {
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+      }
+      window.location.href = "index.html";
+    }
+
+    // Executa a validação assim que a página carrega
+    validarSessao();
   </script>
 </body>
 </html>
