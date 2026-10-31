@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Trezzy Pay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0b0b0f; color: #f5f5f7; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+    :root { --ma-primary: #8b5cf6; }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between">
+
+  <header class="border-b border-[#292933] bg-[#0b0b0f]/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <div>
+          <span class="font-heading font-black text-white text-lg tracking-tight">TREZZY <span class="text-purple-500">PAY</span></span>
+          <span class="text-[10px] text-zinc-400 block -mt-1" id="user-email-display">Área de Membros</span>
+        </div>
+      </div>
+      <button onclick="window.location.href='index.html'" class="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-red-400 bg-[#14141b] px-3.5 py-2 rounded-xl border border-[#292933] transition">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </button>
+    </div>
+  </header>
+
+  <main class="overflow-x-clip px-4 pb-6 sm:px-6 flex-1">
+    <div class="mx-auto w-full max-w-6xl space-y-8 pb-8">
+      
+      <section class="relative -mx-6 flex items-end justify-start overflow-hidden bg-cover bg-center px-8 pb-10 pt-24 md:px-10 md:pb-14 md:pt-28 min-h-[50vh] -mt-14" style="background-image: linear-gradient(135deg, var(--ma-primary) 0%, #14141b 100%);">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2" style="background: linear-gradient(to top, #0b0b0f 0%, transparent 100%);"></div>
+        <div class="relative z-10 max-w-2xl space-y-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-circle-check"></i> Acesso Liberado
+          </span>
+          <h1 class="text-3xl font-bold text-white drop-shadow-lg md:text-5xl font-heading">Sua Biblioteca de STL</h1>
+          <p class="text-zinc-300 text-sm">Gerencie e faça download dos seus packs adquiridos.</p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div>
+          <h2 class="text-2xl font-bold text-white sm:text-3xl font-heading">Meus Packs Disponíveis</h2>
+        </div>
+
+        <details class="group overflow-hidden rounded-2xl border border-[#292933] bg-[#14141b] shadow-xl" open>
+          <summary class="flex cursor-pointer list-none items-center gap-4 px-4 py-4 sm:px-5 [&::-webkit-details-marker]:hidden">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400">
+              <i class="fa-solid fa-folder-open text-lg"></i>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-lg font-semibold text-white">Pack Completo - 1.000+ Arquivos STL</span>
+              <span class="block text-sm text-zinc-400">Modelos para FDM e Resina</span>
+            </span>
+            <i class="fa-solid fa-chevron-down text-zinc-400 transition group-open:rotate-180"></i>
+          </summary>
+          <div class="border-t border-[#292933] p-3 sm:p-4 space-y-2 bg-[#0b0b0f]/50">
+            
+            <a href="#" class="flex items-center gap-3 rounded-xl bg-white/[0.02] border border-white/5 px-3.5 py-3 transition hover:bg-white/[0.05]">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400"><i class="fa-solid fa-cloud-arrow-down"></i></span>
+              <span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold text-white">Pack 01 - Peças Articuladas (.zip)</span><span class="block text-xs text-zinc-400">Tamanho: 1.2 GB</span></span>
+            </a>
+            
+            <a href="#" class="flex items-center gap-3 rounded-xl bg-white/[0.02] border border-white/5 px-3.5 py-3 transition hover:bg-white/[0.05]">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400"><i class="fa-solid fa-cloud-arrow-down"></i></span>
+              <span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold text-white">Pack 02 - Decoração Geek (.zip)</span><span class="block text-xs text-zinc-400">Tamanho: 850 MB</span></span>
+            </a>
+
+            <a href="https://wa.me/5511990035253" target="_blank" class="flex items-center gap-3 rounded-xl bg-white/[0.02] border border-emerald-500/20 px-3.5 py-3 transition hover:bg-emerald-500/10">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-brands fa-whatsapp text-lg"></i></span>
+              <span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold text-white">Suporte VIP via WhatsApp</span><span class="block text-xs text-zinc-400">Tire dúvidas sobre impressões</span></span>
+            </a>
+
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-[#292933] py-6 text-center text-xs text-zinc-500">
+    © 2026 Trezzy 3D • Todos os direitos reservados.
+  </footer>
+</body>
+</html>
